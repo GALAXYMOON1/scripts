@@ -1,0 +1,129 @@
+-- Neon bright red color
+local NEON_RED = Color3.fromRGB(255, 0, 0)
+
+-- Variable to track if the highlight is enabled
+local highlightEnabled = false
+
+-- Function to create a highlight effect for a player
+local function createHighlight(player)
+    -- Create neon box
+    local highlight = Instance.new("BoxHandleAdornment")
+    highlight.Size = player.Character.HumanoidRootPart.Size
+    highlight.Adornee = player.Character.HumanoidRootPart
+    highlight.AlwaysOnTop = true
+    highlight.ZIndex = 10
+    highlight.Color3 = NEON_RED
+    highlight.Transparency = 0
+    highlight.Name = "Highlight"
+    highlight.Parent = player.Character.HumanoidRootPart
+    
+    -- Create name tag
+    local nameTag = Instance.new("BillboardGui")
+    nameTag.Adornee = player.Character.HumanoidRootPart
+    nameTag.Size = UDim2.new(0, 100, 0, 40)
+    nameTag.StudsOffset = Vector3.new(0, 3, 0)
+    nameTag.Name = "NameTag"
+    nameTag.Parent = player.Character.HumanoidRootPart
+    
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    nameLabel.Position = UDim2.new(0, 0, 0, 0)
+    nameLabel.Font = Enum.Font.SourceSans
+    nameLabel.TextSize = 14
+    nameLabel.TextColor3 = Color3.new(1, 1, 1) -- White color
+    nameLabel.TextStrokeTransparency = 0.5
+    nameLabel.Text = player.Name
+    nameLabel.Parent = nameTag
+    
+    local healthBar = Instance.new("Frame")
+    healthBar.Size = UDim2.new(0.5, 0, 0.1, 0)
+    healthBar.Position = UDim2.new(0, 0, 0.5, 0)
+    healthBar.BackgroundColor3 = Color3.new(0, 1, 0) -- Green color
+    healthBar.BorderSizePixel = 0
+    healthBar.Name = "HealthBar"
+    healthBar.Parent = nameTag
+    
+    local healthText = Instance.new("TextLabel")
+    healthText.BackgroundTransparency = 1
+    healthText.Size = UDim2.new(1, 0, 0.5, 0)
+    healthText.Position = UDim2.new(0, 0, 0, 0)
+    healthText.Font = Enum.Font.SourceSans
+    healthText.TextSize = 14
+    healthText.TextColor3 = Color3.new(1, 1, 1) -- White color
+    healthText.TextStrokeTransparency = 0.5
+    healthText.Text = "Health: " .. player.Character.Humanoid.Health
+    healthText.Parent = healthBar
+    
+    -- Update player's health and distance every 0.1 seconds
+    spawn(function()
+        while true do
+            wait(0.1)
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                healthText.Text = "Health: " .. player.Character.Humanoid.Health
+                local distance = (player.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                nameLabel.Text = player.Name .. " (" .. math.floor(distance) .. " studs)"
+            end
+        end
+    end)
+end
+
+-- Function to remove the highlight effect from a player
+local function removeHighlight(player)
+    local character = player.Character
+    if character then
+        local highlight = character:FindFirstChild("Highlight")
+        if highlight then
+            highlight:Destroy()
+        end
+    end
+end
+
+-- Function to toggle the highlight effect on and off
+local function toggleHighlight()
+    highlightEnabled = not highlightEnabled
+    if highlightEnabled then
+        highlightAllPlayers()
+    else
+        unhighlightAllPlayers()
+    end
+end
+
+-- Function to highlight all players in the game
+local function highlightAllPlayers()
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        createHighlight(player)
+    end
+end
+
+-- Function to unhighlight all players in the game
+local function unhighlightAllPlayers()
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        removeHighlight(player)
+    end
+end
+
+-- Connect a function to highlight new players when they join the game
+game.Players.PlayerAdded:Connect(function(player)
+    if highlightEnabled then
+        createHighlight(player)
+    end
+end)
+
+-- Connect a function to unhighlight players when they leave the game
+game.Players.PlayerRemoving:Connect(function(player)
+    removeHighlight(player)
+end)
+
+-- Connect a function to toggle the highlight effect when the Insert key is pressed
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.Insert then
+        toggleHighlight()
+    elseif input.KeyCode == Enum.KeyCode.Delete then
+        unhighlightAllPlayers()
+        highlightEnabled = false
+    end
+end)
+
+-- Highlight all existing players when the script starts
+highlightAllPlayers()
