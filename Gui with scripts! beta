@@ -18,8 +18,24 @@ local Section = Tab:Section({
 })
 
 Section:Button({
-    text = "aimbot right click",
+    text = "right click to work",
     callback = function()loadstring(game:HttpGet("https://pastebin.com/raw/eBjqzFci"))()
+        print("Clicked button")
+    end,
+})
+
+local Tab = TabSection:Tab({
+    text = "Esp",
+    icon = "rbxassetid://7999345313",
+})
+
+local Section = Tab:Section({
+    text = "Esp"
+})
+
+Section:Button({
+    text = "click this to work",
+    callback = function()loadstring(game:HttpGet("https://pastebin.com/raw/anxAGn0J"))()
         print("Clicked button")
     end,
 })
