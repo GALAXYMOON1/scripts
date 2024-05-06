@@ -1,0 +1,59 @@
+local dwCamera = workspace.CurrentCamera
+local dwRunService = game:GetService("RunService")
+local dwUIS = game:GetService("UserInputService")
+local dwEntities = game:GetService("Players")
+local dwLocalPlayer = dwEntities.LocalPlayer
+local dwMouse = dwLocalPlayer:GetMouse()
+
+local settings = {
+    Aimbot = true,
+    Aiming = false,
+    Aimbot_AimPart = "Head"
+}
+
+dwUIS.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton2 then
+        settings.Aiming = true
+    end
+end)
+
+dwUIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton2 then
+        settings.Aiming = false
+    end
+end)    
+
+dwRunService.RenderStepped:Connect(function()
+    local dist = math.huge
+    local closest_char = nil 
+
+    if settings.Aiming then
+        for i,v in ipairs(dwEntities:GetPlayers()) do
+            if v ~= dwLocalPlayer and 
+               v.Character and
+               v.Character:FindFirstChild("HumanoidRootPart") and
+               v.Character:FindFirstChild("Humanoid") and
+               v.Character:FindFirstChild("Humanoid").Health > 0 then
+                
+                local char = v.Character
+                local char_part_pos, is_onscreen = dwCamera:WorldToViewportPoint(char[settings.Aimbot_AimPart].Position)
+                
+                if is_onscreen then
+                    local mag = (Vector2.new(dwMouse.X, dwMouse.Y) - Vector2.new(char_part_pos.X, char_part_pos.Y)).Magnitude
+                    
+                    if mag < dist then
+                        dist = mag
+                        closest_char = char
+                    end
+                end
+            end
+        end
+ 
+        if closest_char ~= nil then
+            local humanoid = closest_char:FindFirstChild("Humanoid")
+            if humanoid and humanoid.Health > 0 then
+                dwCamera.CFrame = CFrame.new(dwCamera.CFrame.Position, closest_char[settings.Aimbot_AimPart].Position)
+            end
+        end
+    end
+end)
