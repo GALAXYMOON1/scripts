@@ -1,0 +1,25 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/WetCheezit/Bracket-V2/main/src.lua"))()
+
+local Window, MainGUI = Library:CreateWindow("Galaxians")
+
+local Tab1 = Window:CreateTab("Scripts")
+
+local Groupbox1 = Tab1:CreateGroupbox("Aimbot", "Left")
+
+local ExampleButton = Groupbox1:CreateButton("No teamcheck", function(bool)loadstring(game:HttpGet("https://raw.githubusercontent.com/GALAXYMOON1/scripts/main/v3%20aimbot"))()
+    print("Pressed")
+end)
+
+local ExampleButton = Groupbox1:CreateButton("Team Check", function(bool)loadstring(game:HttpGet("https://raw.githubusercontent.com/GALAXYMOON1/scripts/main/aimbot%20v3%20with%20teamcheck"))()
+    print("Pressed")
+end)
+
+local Groupbox1 = Tab1:CreateGroupbox("Esp", "Right")
+
+local ExampleButton = Groupbox1:CreateButton("Team Check", function(bool)loadstring(game:HttpGet("https://raw.githubusercontent.com/GALAXYMOON1/scripts/main/v3%20esp"))()
+    print("Pressed")
+end)
+
+local ExampleButton = Groupbox1:CreateButton("no Team Check", function(bool)loadstring(game:HttpGet("https://raw.githubusercontent.com/GALAXYMOON1/scripts/main/v3%20esp"))()
+    print("Pressed")
+end)
