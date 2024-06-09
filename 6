@@ -1,0 +1,45 @@
+local models = {}
+local localPlayer = game:GetService("Players").LocalPlayer
+local folder = Instance.new("Folder", game:GetService("CoreGui"))
+local characters = workspace:WaitForChild("Characters")
+
+local function setupModel(v)
+    if models[v] then
+        models[v]:Destroy()
+        models[v] = nil
+    end
+
+    local found = false
+    for i, k in pairs(localPlayer.PlayerGui:GetChildren()) do
+        if k.Name == "NameGui" and k.Adornee.Name == "Head" then
+            if k.Adornee.Parent == v.Body then
+                found = true
+            end
+        end
+    end
+
+    if not found then
+        local highlight = Instance.new("Highlight", folder)
+        highlight.Adornee = v
+        highlight.OutlineColor = Color3.new(255, 255, 255)
+        highlight.FillColor = Color3.new(255, 0, 0)
+        highlight.FillTransparency = 0.7
+        models[v] = highlight
+
+        v:GetPropertyChangedSignal("Parent"):Connect(function()
+            if v.Parent == nil then models[v]:Destroy() end
+        end)
+    end
+end
+        
+for i, v in pairs(characters:GetChildren()) do
+    if v:FindFirstChild("Body") then
+        setupModel(v)
+    end
+end
+characters.ChildAdded:Connect(function(model)
+    task.wait(1)
+    if model.Parent ~= nil and model:FindFirstChild("Body") then
+        setupModel(model)
+    end
+end)
