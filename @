@@ -12,7 +12,7 @@ end)
 
 uis.InputBegan:Connect(function(i, gp)
 	if gp then return end 
-	if i.KeyCode == Enum.KeyCode.Q then 
+	if i.KeyCode == Enum.KeyCode.C then 
 		isRunning = true 
 		while isRunning do 
 			task.wait()
